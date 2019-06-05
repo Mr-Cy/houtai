@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>柱状图</title>
+    <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+    <!--<link rel="stylesheet" type="text/css" href="css/home.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="css/">-->
+    <style>
+        #main{
+            display: inline-block;
+            width: 1600px;
+            height: 300px;
+            margin:30px;padding: 20px;
+        }
+    </style>
+    <!--<script src="js/jquery-2.2.0.min.js"></script>-->
+    <script th:src="@{/js/jquery-2.2.0.min.js}"></script>
+    <!--<script type="text/javascript" src="js/echarts.common.min.js"></script>-->
+    <!--<script type="text/javascript" src="th:rec/js/echarts.common.min.js"></script>-->
+    <script type="text/javascript" th:src="@{/js/echarts.common.min.js}"></script>
+    <script>
+        $(function () {
+            var data1=[];
+            var data2=[];
+            $.ajax({
+                url: "/tuxing/demo",
+                type: "post",
+                success: function (res) {
+                    $(res).each(function () {
+                        data1.push(this.name)
+                        data2.push(this.price)
+                    })
+                    console.log(data1)
+                    console.log(data2)
+                    var myChart = echarts.init(document.getElementById('main'));
+                    option = {
+                        title : {
+                            text: '某楼盘销售情况',
+                            subtext: '纯属虚构'
+                        },
+                        tooltip : {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data:["车位"]
+                        },
+                        toolbox: {
+                            show : true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        calculable : true,
+                        xAxis : [
+                            {
+                                type : 'category',
+                                boundaryGap : false,
+                                data : data1
+                            }
+                        ],
+                        yAxis : [
+                            {
+                                type : 'value'
+                            }
+                        ],
+                        series : [
+                            {
+                                name:'车位',
+                                type:'line',
+                                smooth:true,
+                                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                data:data2
+                            },
+                    ]
+                    };
+
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+
+                }
+            })
+            // 基于准备好的dom，初始化echarts实例
+
+        })
+    </script>
+
+<body>
+<div id="main"></div>
+</body>
+
+</html>
